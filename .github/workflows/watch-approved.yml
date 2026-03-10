@@ -1,0 +1,16 @@
+name: Notify on approved label
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # every hour
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for newly approved issues
+        run: |
+          curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/checkstyle/checkstyle/issues?labels=approved&state=open&sort=updated&per_page=5" \
+            | jq '.[].html_url'
