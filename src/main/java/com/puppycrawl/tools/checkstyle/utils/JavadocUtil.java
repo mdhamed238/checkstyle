@@ -309,6 +309,53 @@ public final class JavadocUtil {
     }
 
     /**
+     * Checks whether the given node holds the indentation of a leading asterisk.
+     * A Javadoc line that has a leading asterisk keeps the whitespace before that
+     * asterisk in a node of its own, so that the leading asterisk itself is reported
+     * at the column where it is written. A leading asterisk always starts a line,
+     * so a text node right in front of one holds nothing but that indentation.
+     *
+     * @param node the node to check
+     * @return true if the node is the indentation of a leading asterisk
+     */
+    public static boolean isLeadingAsteriskIndentation(DetailNode node) {
+        final DetailNode nextSibling = node.getNextSibling();
+        return nextSibling != null
+                && node.getType() == JavadocCommentsTokenTypes.TEXT
+                && isLeadingAsterisk(nextSibling);
+    }
+
+    /**
+     * Checks whether the given node is a leading asterisk of a Javadoc line.
+     *
+     * @param node the node to check
+     * @return true if the node is a leading asterisk
+     */
+    private static boolean isLeadingAsterisk(DetailNode node) {
+        return node.getType() == JavadocCommentsTokenTypes.LEADING_ASTERISK
+                || node.getType() == JavadocCommentsTokenTypes.LEADING_ASTERISKS;
+    }
+
+    /**
+     * Gets the next sibling of the given node, skipping the indentation
+     * of a leading asterisk.
+     *
+     * @param node the node to get the sibling of, may be {@code null}
+     * @return next sibling, or {@code null} if there is none
+     */
+    @Nullable
+    public static DetailNode getNextSiblingSkippingIndentation(@Nullable DetailNode node) {
+        DetailNode nextSibling = null;
+        if (node != null) {
+            nextSibling = node.getNextSibling();
+            if (nextSibling != null && isLeadingAsteriskIndentation(nextSibling)) {
+                nextSibling = nextSibling.getNextSibling();
+            }
+        }
+        return nextSibling;
+    }
+
+    /**
      * Returns the name of a token for a given ID.
      *
      * @param id

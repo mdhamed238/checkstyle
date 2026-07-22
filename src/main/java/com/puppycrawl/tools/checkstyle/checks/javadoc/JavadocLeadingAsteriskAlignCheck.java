@@ -102,19 +102,15 @@ public class JavadocLeadingAsteriskAlignCheck extends AbstractJavadocCheck {
         final boolean isJavadocStartingLine = ast.getLineNumber() == javadocStartLineNumber;
 
         if (!isJavadocStartingLine) {
-            final Optional<Integer> leadingAsteriskColumnNumber =
-                                        getAsteriskColumnNumber(ast.getText());
+            final String line = fileLines[ast.getLineNumber() - 1];
+            final int columnNumberTabsExpanded = CommonUtil.lengthExpandedTabs(
+                    line, ast.getColumnNumber(), getTabWidth()) + 1;
 
-            leadingAsteriskColumnNumber.ifPresent(columnNumber -> {
-                final int columnNumberTabsExpanded = CommonUtil.lengthExpandedTabs(
-                        ast.getText(), columnNumber, getTabWidth());
-
-                if (!hasValidAlignment(
-                        expectedColumnNumberTabsExpanded, columnNumberTabsExpanded)) {
-                    log(ast.getLineNumber(), columnNumber - 1, MSG_KEY,
-                            columnNumberTabsExpanded, expectedColumnNumberTabsExpanded);
-                }
-            });
+            if (!hasValidAlignment(
+                    expectedColumnNumberTabsExpanded, columnNumberTabsExpanded)) {
+                log(ast, MSG_KEY,
+                        columnNumberTabsExpanded, expectedColumnNumberTabsExpanded);
+            }
         }
     }
 

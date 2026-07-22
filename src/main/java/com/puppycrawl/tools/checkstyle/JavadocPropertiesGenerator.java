@@ -235,6 +235,10 @@ public final class JavadocPropertiesGenerator {
 
         for (DetailNode node = tree.getFirstChild(); node != null;
                 node = node.getNextSibling()) {
+            if (JavadocUtil.isLeadingAsteriskIndentation(node)) {
+                // indentation of a leading asterisk is not part of the sentence
+                continue;
+            }
             if (node.getType() == JavadocCommentsTokenTypes.TEXT) {
                 final Matcher matcher = END_OF_SENTENCE_PATTERN.matcher(node.getText());
                 if (matcher.find()) {

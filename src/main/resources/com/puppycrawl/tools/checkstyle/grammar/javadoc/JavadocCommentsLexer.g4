@@ -75,6 +75,7 @@ import com.puppycrawl.tools.checkstyle.grammar.CrAwareLexerSimulator;
     private final Deque<Integer> braceCounters = new ArrayDeque<>();
     private final Deque<Token> openTagNameTokens = new ArrayDeque<>();
     private final Deque<Token> closeTagNameTokens = new ArrayDeque<>();
+    private final Deque<Token> queuedTokens = new ArrayDeque<>();
 
     public boolean isAfterNewline() {
         return afterNewline;
@@ -164,6 +165,29 @@ import com.puppycrawl.tools.checkstyle.grammar.CrAwareLexerSimulator;
         if (previousTokenType != NEWLINE) {
             afterNewline = false;
         }
+    }
+
+    /**
+     * Leading asterisks are matched together with the indentation that precedes them,
+     * so the token has to be cut in two before it is handed over to the token stream.
+     * This way a leading asterisk is reported at the position of the asterisk itself
+     * and not at the beginning of the line.
+     *
+     * @return next token from the character stream
+     */
+    @Override
+    public Token nextToken() {
+        if (queuedTokens.isEmpty()) {
+            Token token = super.nextToken();
+            if (token.getType() == LEADING_ASTERISK) {
+                queuedTokens.addAll(
+                        JavadocCommentsLexerUtil.splitIndentation(token, WS, WHITESPACES));
+            }
+            else {
+                queuedTokens.add(token);
+            }
+        }
+        return queuedTokens.poll();
     }
 
     public Set<SimpleToken> getUnclosedTagNameTokens() {

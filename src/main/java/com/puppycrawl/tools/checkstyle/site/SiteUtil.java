@@ -1829,9 +1829,10 @@ public final class SiteUtil {
      * @return true if the node contains text content to write.
      */
     private static boolean isTextContent(DetailNode node, boolean isInHtmlElement) {
-        return node.getType() == JavadocCommentsTokenTypes.TEXT
-                || isInHtmlElement && node.getFirstChild() == null
-                && node.getType() != JavadocCommentsTokenTypes.LEADING_ASTERISK;
+        return !JavadocUtil.isLeadingAsteriskIndentation(node)
+                && (node.getType() == JavadocCommentsTokenTypes.TEXT
+                    || isInHtmlElement && node.getFirstChild() == null
+                    && node.getType() != JavadocCommentsTokenTypes.LEADING_ASTERISK);
     }
 
     /**
@@ -1885,24 +1886,17 @@ public final class SiteUtil {
      * @return true if the given child index is the end of the first javadoc paragraph.
      */
     public static boolean isEndOfFirstJavadocParagraph(DetailNode child) {
-        final DetailNode nextSibling = child.getNextSibling();
-        boolean result = false;
-        if (nextSibling != null) {
-            final DetailNode secondNextSibling = nextSibling.getNextSibling();
-            if (secondNextSibling != null) {
-                final DetailNode thirdNextSibling = secondNextSibling.getNextSibling();
-                if (thirdNextSibling != null) {
-                    result = child.getType() == JavadocCommentsTokenTypes.NEWLINE
-                            && nextSibling.getType()
-                            == JavadocCommentsTokenTypes.LEADING_ASTERISK
-                            && secondNextSibling.getType()
-                            == JavadocCommentsTokenTypes.NEWLINE
-                            && thirdNextSibling.getType()
-                            == JavadocCommentsTokenTypes.LEADING_ASTERISK;
-                }
-            }
-        }
-        return result;
+        final DetailNode nextSibling = JavadocUtil.getNextSiblingSkippingIndentation(child);
+        final DetailNode secondNextSibling =
+                JavadocUtil.getNextSiblingSkippingIndentation(nextSibling);
+        final DetailNode thirdNextSibling =
+                JavadocUtil.getNextSiblingSkippingIndentation(secondNextSibling);
+
+        return thirdNextSibling != null
+                && child.getType() == JavadocCommentsTokenTypes.NEWLINE
+                && nextSibling.getType() == JavadocCommentsTokenTypes.LEADING_ASTERISK
+                && secondNextSibling.getType() == JavadocCommentsTokenTypes.NEWLINE
+                && thirdNextSibling.getType() == JavadocCommentsTokenTypes.LEADING_ASTERISK;
     }
 
     /**

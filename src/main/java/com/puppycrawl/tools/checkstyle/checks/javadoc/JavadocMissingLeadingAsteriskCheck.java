@@ -23,6 +23,7 @@ import com.puppycrawl.tools.checkstyle.StatelessCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailNode;
 import com.puppycrawl.tools.checkstyle.api.JavadocCommentsTokenTypes;
 import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
+import com.puppycrawl.tools.checkstyle.utils.JavadocUtil;
 
 /**
  * <div>
@@ -74,7 +75,8 @@ public class JavadocMissingLeadingAsteriskCheck extends AbstractJavadocCheck {
     @Override
     public void visitJavadocToken(DetailNode detailNode) {
         if (!isInsideHtmlComment(detailNode)) {
-            final DetailNode nextSibling = detailNode.getNextSibling();
+            final DetailNode nextSibling =
+                    JavadocUtil.getNextSiblingSkippingIndentation(detailNode);
 
             if (nextSibling != null && !isLeadingAsterisk(nextSibling)
                         && !isLastLine(nextSibling)) {

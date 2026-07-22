@@ -218,7 +218,9 @@ public class RequireEmptyLineBeforeBlockTagGroupCheck extends AbstractJavadocChe
         DetailNode currentNode = tagNode.getPreviousSibling();
 
         while (currentNode != null) {
-            previousNodeTypes.add(currentNode.getType());
+            if (!JavadocUtil.isLeadingAsteriskIndentation(currentNode)) {
+                previousNodeTypes.add(currentNode.getType());
+            }
             currentNode = currentNode.getPreviousSibling();
         }
         return ONLY_TAG_VARIATION_1.equals(previousNodeTypes)

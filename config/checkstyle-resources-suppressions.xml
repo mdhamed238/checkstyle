@@ -148,6 +148,8 @@
   <suppress checks="FileTabCharacter"
     files="/InputJavadocWithCrAsNewline\.javadoc"/>
   <suppress checks="FileTabCharacter"
+    files="/InputLeadingAsteriskIndentation\.javadoc"/>
+  <suppress checks="FileTabCharacter"
     files="/InputLeadingAsterisksExtended\.javadoc"/>
   <suppress checks="FileTabCharacter"
     files="/InputListWithUnclosedItemInUnclosedParagraph\.javadoc"/>

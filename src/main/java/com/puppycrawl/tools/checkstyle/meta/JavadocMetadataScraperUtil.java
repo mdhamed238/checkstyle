@@ -111,6 +111,7 @@ public final class JavadocMetadataScraperUtil {
     private static boolean isContentToWrite(DetailNode detailNode) {
 
         return detailNode.getType() != JavadocCommentsTokenTypes.LEADING_ASTERISK
+            && !JavadocUtil.isLeadingAsteriskIndentation(detailNode)
             && (detailNode.getType() == JavadocCommentsTokenTypes.TEXT
             || !TOKEN_TEXT_PATTERN.matcher(detailNode.getText()).matches());
     }

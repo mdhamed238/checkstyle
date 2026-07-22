@@ -64,6 +64,12 @@ public class JavadocCommentsAstRegressionTest extends AbstractTreeTestSupport {
     }
 
     @Test
+    public void testLeadingAsteriskIndentation() throws Exception {
+        verifyJavadocTree(getPath("ExpectedLeadingAsteriskIndentation.txt"),
+                getPath("InputLeadingAsteriskIndentation.javadoc"));
+    }
+
+    @Test
     public void testSimpleJavadocWithText() throws Exception {
         verifyJavadocTree(getPath("ExpectedSimpleJavadocWithText.txt"),
                 getPath("InputSimpleJavadocWithText.javadoc"));

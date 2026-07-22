@@ -1,0 +1,6 @@
+   * Opening asterisk is at column 4.
+  * This mid-comment asterisk is at column 3.
+    ** These mid-comment asterisks start at column 5.
+	* This asterisk is indented with a tab.
+   *
+   * Text after an empty asterisk line.

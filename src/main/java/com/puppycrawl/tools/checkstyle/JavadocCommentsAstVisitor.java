@@ -635,15 +635,8 @@ public class JavadocCommentsAstVisitor extends JavadocCommentsParserBaseVisitor<
      * @return true if the token contains multiple leading asterisks
      */
     private static boolean isMultipleLeadingAsterisks(Token token) {
-        boolean result = false;
-
-        if (token.getType() == JavadocCommentsLexer.LEADING_ASTERISK) {
-            final String tokenText = token.getText();
-            final int firstAsteriskIndex = tokenText.indexOf('*');
-            result = firstAsteriskIndex < tokenText.length() - 1;
-        }
-
-        return result;
+        return token.getType() == JavadocCommentsLexer.LEADING_ASTERISK
+                && token.getText().length() > 1;
     }
 
     /**

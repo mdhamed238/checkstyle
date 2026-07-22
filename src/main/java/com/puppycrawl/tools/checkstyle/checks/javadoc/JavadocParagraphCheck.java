@@ -319,7 +319,8 @@ public class JavadocParagraphCheck extends AbstractJavadocCheck {
         DetailNode currentNode = node;
         while (currentNode != null
                 && (currentNode.getType() == JavadocCommentsTokenTypes.LEADING_ASTERISK
-                    || currentNode.getType() == JavadocCommentsTokenTypes.NEWLINE)) {
+                    || currentNode.getType() == JavadocCommentsTokenTypes.NEWLINE
+                    || JavadocUtil.isLeadingAsteriskIndentation(currentNode))) {
             currentNode = currentNode.getNextSibling();
         }
         if (currentNode != null

@@ -326,7 +326,8 @@ public class SummaryJavadocCheck extends AbstractJavadocCheck {
         DetailNode curNode = descriptionNode;
         while (curNode != null) {
             if (curNode.getFirstChild() == null
-                && curNode.getType() != JavadocCommentsTokenTypes.LEADING_ASTERISK) {
+                && curNode.getType() != JavadocCommentsTokenTypes.LEADING_ASTERISK
+                && !JavadocUtil.isLeadingAsteriskIndentation(curNode)) {
                 customTagContent.append(curNode.getText());
             }
 

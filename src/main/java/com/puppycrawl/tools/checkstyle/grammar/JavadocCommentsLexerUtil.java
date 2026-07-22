@@ -21,9 +21,11 @@ package com.puppycrawl.tools.checkstyle.grammar;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.Token;
 
 import com.puppycrawl.tools.checkstyle.api.JavadocCommentsTokenTypes;
@@ -100,6 +102,47 @@ public final class JavadocCommentsLexerUtil {
     public static boolean isOpenTagName(Token previousToken) {
         return previousToken == null
                 || previousToken.getType() != JavadocCommentsTokenTypes.TAG_SLASH;
+    }
+
+    /**
+     * Splits the indentation off a leading asterisk token.
+     *
+     * <p>
+     * All lexer rules match the indentation of a line together with the asterisks that
+     * follow it, as the indentation is what tells an asterisk at the beginning of a line
+     * apart from an asterisk used in the middle of a text. This method cuts the matched
+     * token in two, so that the leading asterisk token starts exactly at the first
+     * asterisk and the indentation is reported as whitespace of its own.
+     * </p>
+     *
+     * @param token the leading asterisk token to split
+     * @param whitespaceType token type to use for the indentation
+     * @param whitespaceChannel channel to place the indentation on
+     * @return the indentation and the asterisks, or just the given token if it is not indented
+     */
+    public static List<Token> splitIndentation(Token token, int whitespaceType,
+                                               int whitespaceChannel) {
+        final List<Token> result;
+        final int indentationLength = token.getText().indexOf('*');
+
+        if (indentationLength == 0) {
+            result = List.of(token);
+        }
+        else {
+            final CommonToken indentation = new CommonToken(token);
+            indentation.setType(whitespaceType);
+            indentation.setChannel(whitespaceChannel);
+            indentation.setStopIndex(token.getStartIndex() + indentationLength - 1);
+
+            final CommonToken asterisks = new CommonToken(token);
+            asterisks.setStartIndex(token.getStartIndex() + indentationLength);
+            asterisks.setCharPositionInLine(
+                    token.getCharPositionInLine() + indentationLength);
+
+            result = List.of(indentation, asterisks);
+        }
+
+        return result;
     }
 
 }
